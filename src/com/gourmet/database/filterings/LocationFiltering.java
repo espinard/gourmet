@@ -8,7 +8,7 @@ import org.dynamicschema.sql.RelationCondition;
 import org.dynamicschema.sql.Sql;
 import org.dynamicschema.sql.SqlCondition;
 
-import com.github.dynamicschema.android.reification.gen.RestaurantTable;
+import com.gourmet.database.gen.AddressTable.AddressColumns;
 
 
 /**
@@ -27,7 +27,15 @@ public class LocationFiltering extends RelationCondition {
 	public LocationFiltering(double latitude, double longitude, double range) {
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.range = range;
 	}
+	
+	
+	/*
+	 * Calculating Distance Between two coordinates using Taxicab geometry = Not the real geometry because SQLite do not support trigonometric functions 
+	 * http://en.wikipedia.org/wiki/Taxicab_geometry
+	 *  Distance = abs(latitude1 - latitude2) + abs(longitude1 - longitude2)
+	 */
 	
 
 	/* (non-Javadoc)
@@ -38,13 +46,11 @@ public class LocationFiltering extends RelationCondition {
 		
 		SqlCondition finalCond = new SqlCondition();
 		SqlCondition locCond = null;
-		String cond ="";		
 		for (int i = 0; i < tables.length; i++) {
-			locCond = new SqlCondition();
-			cond+=Sql.ABS+ "(" + tables[0].col(RestaurantTable.RestaurantColumns.LOC_LATITUDE)+  " - "+ this.latitude +  " ) <= " + this.range; 
-			locCond.and(cond);
-			cond+=Sql.ABS+ "(" + tables[0].col(RestaurantTable.RestaurantColumns.LOC_LONGITUDE)+  " - "+ this.longitude +  " ) <= " + this.range; 
+			String distanceCalc = Sql.ABS+ "(" + tables[i].col(AddressColumns.LATITUDE)+  " - "+ this.latitude + ") + " + 
+											Sql.ABS+ "(" + tables[i].col(AddressColumns.LONGITUDE)+  " - "+ this.longitude+ ")";
 			
+			locCond =new SqlCondition().lEq(distanceCalc, this.range);
 			finalCond.and(locCond.toString());
 		}
 		

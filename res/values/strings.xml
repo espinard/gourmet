@@ -4,5 +4,11 @@
     <string name="app_name">Gourmet</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="title_activity_my_list">Client Options Menu</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_resto_activity">Matched Restaurants</string>
+    <string name="title_meal_activity">Meal served by Selected Restaurant</string>
+    <string name="btn_logout">Logout</string>
+    <string name="title_activity_resto_test">RestoTestActivity</string>
 
 </resources>
