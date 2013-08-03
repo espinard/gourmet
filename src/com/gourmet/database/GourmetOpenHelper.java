@@ -17,7 +17,7 @@ import com.gourmet.database.gen.GourmetSchema;
 
 public class GourmetOpenHelper extends SQLiteOpenHelper {
 
-	private static final String DATABASE_NAME = "gourmetVersion12.sqlite";  
+	private static final String DATABASE_NAME = "gourmetVersion13.sqlite";  
 	private static final int DATABASE_VERSION = 1;
 
 	private Schema dbSchema;

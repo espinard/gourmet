@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.gourmet.R;
+import com.gourmet.database.dao.GourmetAddressDAO;
 import com.gourmet.database.services.RestaurantDAOServices;
 import com.gourmet.model.AppConstants;
 import com.gourmet.session.UserSessionManager;
@@ -27,7 +28,7 @@ public class ClientRequestActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		sessionMgr = new UserSessionManager(getApplicationContext());  
+		sessionMgr = UserSessionManager.getInstance(getApplicationContext());  
 		sessionMgr.checkUserSession();    
 
 		setContentView(R.layout.activity_cli_req);
@@ -39,9 +40,14 @@ public class ClientRequestActivity extends Activity {
 
 		
 		options = new String [] {
-				RestaurantDAOServices.NEARBY_REST_KEY,
-				RestaurantDAOServices.REST_PREF_KEY,
-				RestaurantDAOServices.REST_SEASON
+				RestaurantDAOServices.NEARBY_REST_PREF,
+				RestaurantDAOServices.ALL_NEAREST_NO_PREF,
+				RestaurantDAOServices.REST_PREF,
+				RestaurantDAOServices.NEARBY_REST_SEASON,
+				RestaurantDAOServices.ALL_REST,
+				RestaurantDAOServices.ALL_REST_CLASSIC,
+				GourmetAddressDAO.ALL_ADDR,
+				GourmetAddressDAO.ALL_ADDR_CLASSIC
 		};
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, options);
@@ -67,7 +73,14 @@ public class ClientRequestActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View arg1, int position, long id) {
 				String selectedOption  = (String) parent.getItemAtPosition(position);
-				Intent i = new Intent(getApplicationContext(), RestoListActivity.class);
+				Intent i = null;
+				
+				if(selectedOption.equals(GourmetAddressDAO.ALL_ADDR) || selectedOption.equals(GourmetAddressDAO.ALL_ADDR_CLASSIC)){
+					i = new Intent(getApplicationContext(), AddressActivity.class);
+				}else {
+					i = new Intent(getApplicationContext(), RestoListActivity.class);
+				}
+				
 				i.putExtra(AppConstants.REQUEST.toString(), selectedOption);
 				startActivity(i);
 			}

@@ -62,10 +62,12 @@ public class UserLocationManager {
 	public static  UserLocation getCurrentLocation(){
 		cpt++;
 
-		if(cpt % 8 == 0)
-			return 	new UserLocation(50.85711,  4.351906);
-
-		return locations.get(userSession.getNumericValue(UserSessionManager.CLIENT_ID_KEY));
+		
+		UserLocation loc = locations.get(userSession.getNumericValue(UserSessionManager.CLIENT_ID_KEY));
+		
+		
+		return loc;
+		
 
 
 	}

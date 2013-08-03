@@ -38,8 +38,14 @@ public class Region implements IEntityObject {
 		}
 		
 		if(attrName.endsWith(RegionColumns.PARENT)){
-			int numVal = Integer.valueOf(val);
-			setIdParent(numVal);
+			
+			if(value == null){
+				setIdParent(-1);
+			}else {
+				int numVal = Integer.valueOf(val);
+				setIdParent(numVal);
+			}
+			
 
 		}
 	

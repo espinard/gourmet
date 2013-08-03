@@ -29,7 +29,7 @@ public class MealListActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
 	        
-	        sessionMgr = new UserSessionManager(getApplicationContext());
+	        sessionMgr = UserSessionManager.getInstance(getApplicationContext());
 	        sessionMgr.checkUserSession();  
 	        datasourceMeal  = GourmetMealDAO.getInstance(getApplicationContext());
 	        datasourceMeal.openDataSource();

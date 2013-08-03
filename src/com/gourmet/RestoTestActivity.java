@@ -21,8 +21,10 @@ public class RestoTestActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 //		setContentView(R.layout.activity_resto_test);
 		datasource = GourmetRestoDAO.getInstance(getApplicationContext());
+		datasource.openDataSource();
+
 		
-		List<Restaurant> restos = datasource.getAllRestaurant();
+		List<Restaurant> restos = datasource.getAllRestaurants();
 		Restaurant [] restoArr = restos.toArray(new Restaurant[restos.size()]);
 		
 		RestaurantAdapter adapter = new RestaurantAdapter(getApplicationContext(), R.layout.list_rest_item, restoArr);
@@ -45,7 +47,6 @@ public class RestoTestActivity extends ListActivity {
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
-		datasource.openDataSource();
 	}
 
 }

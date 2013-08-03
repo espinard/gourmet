@@ -76,13 +76,25 @@ public class RestoListActivity extends Activity {
 	private List<Restaurant> handleRestaurantsLoadingRequest(String request){
 		List<Restaurant> restList = null;
 		
-		if(request.equals(RestaurantDAOServices.NEARBY_REST_KEY))
-			restList = datasourceResto.getAllNearbyRestaurants();
-		else if (request.equals(RestaurantDAOServices.REST_PREF_KEY))
+		if(request.equals(RestaurantDAOServices.NEARBY_REST_PREF))
+			restList = datasourceResto.getAllNearbyRestaurantsMatchingPref();
+		
+		else if (request.equals(RestaurantDAOServices.REST_PREF))
 			restList = datasourceResto.getAllRestaurantsMatchingIngredientsPref();
-//			restList =  datasourceResto.getAllRestaurantsClassic(sessionMgr);
-		else 
+		
+		else if (request.equals(RestaurantDAOServices.ALL_REST))
+				restList  = datasourceResto.getAllRestaurants();
+		
+		else if(request.equals(RestaurantDAOServices.ALL_REST_CLASSIC))
+				restList = datasourceResto.getAllRestaurantsClassic(sessionMgr);
+		
+		else if(request.equals(RestaurantDAOServices.ALL_NEAREST_NO_PREF))
+			restList =  datasourceResto.getAllNearbyRestaurants();
+		else
+			
 			restList =datasourceResto.getNearbyRestoServingSeasonalMealsWithPrefIngr();
+		
+
 		
 		return restList;
 	}

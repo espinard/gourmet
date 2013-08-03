@@ -50,7 +50,7 @@ public class GourmetClientDAO implements ClientDAOServices {
 		dbGourmetHelper = GourmetOpenHelper.getInstance(context);
 		reifiedSchema = dbGourmetHelper.getReifiedSchema();
 		this.appContext = context;
-		this.sessionsMgr = new UserSessionManager(this.appContext);
+		this.sessionsMgr = UserSessionManager.getInstance(this.appContext);
 
 		//init entities loader 
 		entityLoader = new EntityLoaderManager();

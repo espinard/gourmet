@@ -3,6 +3,7 @@ package com.gourmet.database.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dynamicschema.context.ContextedQueryBuilder;
 import org.dynamicschema.context.RelationalContextManager;
 import org.dynamicschema.reification.Schema;
 
@@ -13,6 +14,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.gourmet.database.GourmetOpenHelper;
 import com.gourmet.database.context.UserLocationManager;
+import com.gourmet.database.gen.AddressTable;
+import com.gourmet.database.gen.AddressTable.AddressColumns;
 import com.gourmet.database.gen.RestaurantTable;
 import com.gourmet.model.Address;
 import com.gourmet.model.Meal;
@@ -20,6 +23,10 @@ import com.gourmet.model.Restaurant;
 import com.gourmet.session.UserSessionManager;
 
 public class GourmetAddressDAO {
+	public static final String ALL_ADDR = "Show all Restaurant Addresses";
+	public static final String ALL_ADDR_CLASSIC = "Show All Restaurant Addresses (Classic)";
+
+	
 	private static GourmetAddressDAO daoInstance = null;
 
 	private EntityLoaderManager loader;
@@ -44,7 +51,7 @@ public class GourmetAddressDAO {
 		dbGourmetHelper = GourmetOpenHelper.getInstance(context);
 		reifiedSchema = dbGourmetHelper.getReifiedSchema();
 		this.appContext = context;
-		this.sessionsMgr = new UserSessionManager(this.appContext);
+		this.sessionsMgr = UserSessionManager.getInstance(appContext);
 		
 	}
 	
@@ -58,14 +65,16 @@ public class GourmetAddressDAO {
 	}
 	
 	/*
-	 * 
+	 * Fetch all restaurant addresses from database 
 	 */
 	public List<Address> getAllRestaurantAddressesFramework(){
-		return null;
-	}
+		ContextedQueryBuilder qb = this.reifiedSchema.getTable(AddressTable.NAME).select();
+		Cursor cursor = database.rawQuery(qb.toString(), null);
+		return loadAddressesFromCursor(cursor, qb.getRelationalContext());
+	}	
 	
 	/*
-	 * 
+	 * Fetch all restaurant addresses from database without using the framework (for validation)
 	 */
 	public List<Address> getAllRestaurantAddressesClassic(UserSessionManager userSession){
 		int langID = userSession.getNumericValue(UserSessionManager.LANG_ID_KEY); //id of the language spoken by user
@@ -84,17 +93,20 @@ public class GourmetAddressDAO {
 	/*
 	 * Not the same loader as the one used with the framework, Although I used reified table for getting size of columns
 	 * whithout having to hard code it. 
+	 * Only used for the validation so that's why there is less coding attention 
 	 */
 	private List<Address> load(Cursor cursor) {
 		List<Address> restL = new ArrayList<Address>();
 		Address addr = null;
-		List<String> colVaList = this.reifiedSchema.getTable(RestaurantTable.NAME).getColumnValues();
 		while(cursor.moveToNext()){
-
 			addr = new Address();
-			for (int i = 0; i < colVaList.size() ; i++) {
-				addr.setAttribute(colVaList.get(i), cursor.getString(i));
-			}
+			
+			addr.setAttribute(AddressColumns._ID, cursor.getString(0));
+			addr.setAttribute(AddressColumns.ID_RESTAURANT, cursor.getString(1));
+			addr.setAttribute(AddressColumns.POSTAL_CODE, cursor.getString(2));
+			addr.setAttribute(AddressColumns.STREET_NUMBER, cursor.getString(3));
+			addr.setStreetName(cursor.getString(4));
+			addr.setLocality(cursor.getString(5));
 		
 			restL.add(addr);
 		}

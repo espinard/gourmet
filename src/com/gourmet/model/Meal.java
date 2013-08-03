@@ -139,8 +139,14 @@ public class Meal implements IEntityObject {
 		}
 		
 		if(attrName.endsWith(MealColumns.ID_RESTAURANT)){
-			numVal = Integer.valueOf(val);
-			setIdRestaurant(numVal);
+			
+			if(value == null){
+				setIdRestaurant(-1);
+			}else {
+				numVal = Integer.valueOf(val);
+				setIdRestaurant(numVal);
+
+			}
 
 		}
 		

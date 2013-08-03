@@ -57,9 +57,13 @@ public class Client implements IEntityObject, IUser {
 		
 		try {
 			numVal = Integer.valueOf(val);
-			doubleVal = Double.valueOf(val);
 		} catch (NumberFormatException e) {
 			numVal = -1;
+		}
+		
+		try {
+			doubleVal = Double.valueOf(val);
+		} catch (NumberFormatException e) {
 			doubleVal = -1;
 		}
 		

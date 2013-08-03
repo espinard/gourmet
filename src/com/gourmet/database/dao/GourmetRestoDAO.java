@@ -13,14 +13,18 @@ import org.dynamicschema.reification.Relation;
 import org.dynamicschema.reification.Schema;
 import org.dynamicschema.reification.Table;
 import org.dynamicschema.sql.SqlCondition;
+import org.dynamicschema.visitor.context.QueryFilteringSpecifier;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.github.dynamicschema.android.reification.gen.GourmetRelationModel.AddressRelations;
 import com.gourmet.database.GourmetOpenHelper;
 import com.gourmet.database.context.UserLocationManager;
+import com.gourmet.database.filterings.LocationFiltering;
+import com.gourmet.database.gen.AddressTable;
 import com.gourmet.database.gen.RestaurantTable;
 import com.gourmet.database.services.RestaurantDAOServices;
 import com.gourmet.model.Restaurant;
@@ -59,7 +63,7 @@ public class GourmetRestoDAO implements RestaurantDAOServices {
 		dbGourmetHelper = GourmetOpenHelper.getInstance(context);
 		reifiedSchema = dbGourmetHelper.getReifiedSchema();
 		this.appContext = context;
-		this.sessionsMgr = new UserSessionManager(this.appContext);
+		this.sessionsMgr = UserSessionManager.getInstance(this.appContext);
 		
 		loader = new EntityLoaderManager();
 	}
@@ -75,12 +79,6 @@ public class GourmetRestoDAO implements RestaurantDAOServices {
 
 	
 	
-	
-	public List<Restaurant> getAllRestaurant(){
-		ContextedQueryBuilder qb =  reifiedSchema.getTable(RestaurantTable.NAME).select();
-		Cursor cursor = database.rawQuery(qb.toString(), null);
-		return  loadRestaurantsFromCursor(cursor, qb.getRelationalContext());
-	}
 
 	
 
@@ -106,39 +104,20 @@ public class GourmetRestoDAO implements RestaurantDAOServices {
 	 */
 
 	public List<Restaurant> getAllNearbyRestaurants() {
-//		reInitTableFilterings();
-//		double  range;
-//		DBTable resto =  getTable(RestaurantTable.NAME);
-//		DBTable ingrPref = getTable(PreferenceTable.NAME);
-//
-//		UserLocation loc = getCurrentLocation();
-//		//set the filterings : Should be part of of the context of user context; context.getSharedPreference
-//		range = Double.valueOf((String)getUserContextValue(UserSessionManager.RANGE_KEY,false)); 
-//		int ClientID = ((Integer)getUserContextValue(UserSessionManager.CLIENT_ID_KEY, true)).intValue();
-//		
-//		ingrPref.setFiltering(new PreferenceFiltering(true, ClientID));
-//		LocationFiltering filter = new LocationFiltering(loc.getLatitude(), loc.getLongitude(), range);
-//		resto.setFiltering(filter);
-//
-//		ContextedQueryBuilder qb = resto.select();
-//		RelationalContextManager ctxMgr = qb.getRelationalContext();
-//
-//		SqlCondition joinCondition = getRelationCondition(IngredientTable.NAME, PreferenceTable.NAME, PreferenceRelations.INGREDIENT_PREFERENCE_14, ctxMgr);
-//		qb.addWhere(joinCondition);
-//
-//		Cursor cursor  = database.rawQuery(qb.toString(), null);
-//		List<Restaurant> listRest = loadRestaurantsFromCursor(cursor, ctxMgr);
-//		cursor.close();
-//		return listRest;
 		
-		
-		DBTable restoTable = this.reifiedSchema.getTable(RestaurantTable.NAME);
-		ContextedQueryBuilder qb = restoTable.select();
-		Cursor cursor  = database.rawQuery(qb.toString(), null);
+		//Set location-related filterings 
+		double userLatitude = UserLocationManager.getCurrentLocation().getLatitude();
+		double userLong = UserLocationManager.getCurrentLocation().getLongitude();
+		double distanceRange = UserLocationManager.getDefaultDistanceRange();
+		LocationFiltering locFilter = new LocationFiltering(userLatitude, userLong, distanceRange);
+		DBTable restoAddr = this.reifiedSchema.getTable(AddressTable.NAME);
+		QueryFilteringSpecifier specifier = new QueryFilteringSpecifier();
+		specifier.addQuerFiltering(AddressRelations.rel_Restaurant_Address, restoAddr, locFilter);
+		ContextedQueryBuilder qb =  this.reifiedSchema.getTable(RestaurantTable.NAME).select(specifier);
+		Cursor cursor = database.rawQuery(qb.toString(), null);
 		List<Restaurant> lRest = loadRestaurantsFromCursor(cursor, qb.getRelationalContext());
 		cursor.close();
-		return lRest; 
-
+		return lRest;
 	}
 
 	private List<Restaurant> loadRestaurantsFromCursor(Cursor cursor, RelationalContextManager ctx){
@@ -173,17 +152,6 @@ public class GourmetRestoDAO implements RestaurantDAOServices {
 	}
 
 
-	
-
-
-//	private Object getUserContextValue(String key, boolean isID){
-//		
-//		if(isID)
-//				return Integer.valueOf(this.sessionsMgr.getIDValue(key));
-//		else
-//			return this.sessionsMgr.getDataValue(key);
-//	}
-
 
 
 	@Override
@@ -195,23 +163,19 @@ public class GourmetRestoDAO implements RestaurantDAOServices {
 
 	@Override
 	public List<Restaurant> getAllNearbyRestaurantsMatchingPref() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 
 	@Override
 	public List<Restaurant> getAllRestaurants() {
-		// TODO Auto-generated method stub
-		return null;
+		ContextedQueryBuilder qb =  reifiedSchema.getTable(RestaurantTable.NAME).select();
+		Cursor cursor = database.rawQuery(qb.toString(), null);
+		return  loadRestaurantsFromCursor(cursor, qb.getRelationalContext());
 	}
 
 
-	@Override
-	public List<Restaurant> getAllRestaurantsFramework() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	public List<Restaurant> getAllRestaurantsClassic(UserSessionManager userSession){
 		

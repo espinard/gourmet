@@ -257,7 +257,7 @@ public class LoginActivity extends Activity {
 	 */
 	private void startUserSession() {
 		
-		session = new UserSessionManager(getApplicationContext());
+		session = UserSessionManager.getInstance(getApplicationContext());
 		
 		session.registerUser(this.loggedUser.getUserName());
 		session.registerNumeric(UserSessionManager.CLIENT_ID_KEY, this.loggedUser.getUserID());
@@ -273,10 +273,7 @@ public class LoginActivity extends Activity {
 		
 		//TODO handle restaurant too
 		// Restaurant have only  1 default Language when they act as user of App (limitation)
-		//Start appropriate activity
-//		 GourmetAddressDAO.getInstance(getApplicationContext()).openDataSource();
-		List<Address> addList = GourmetAddressDAO.getInstance(getApplicationContext()).getAllRestaurantAddressesClassic(session);
-		
+
 		 Intent clReqIntent = new Intent(getApplicationContext(), ClientRequestActivity.class);
 		 startActivity(clReqIntent);
 		 finish();

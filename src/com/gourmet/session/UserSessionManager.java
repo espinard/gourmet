@@ -35,6 +35,19 @@ public class UserSessionManager {
 	private Context currContext; //context of use
 	
 	
+	private static UserSessionManager manager = null;
+	
+	
+	public static UserSessionManager getInstance(Context context){
+		if(manager == null)
+			manager = new UserSessionManager(context);
+		return manager;
+	}
+	
+	
+	
+	
+	
 	public UserSessionManager(Context context) {
 		currContext = context;
 		prefs = currContext.getSharedPreferences(PREF_FILE_NAME,0	);

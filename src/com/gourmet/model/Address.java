@@ -12,6 +12,7 @@ public class Address implements IEntityObject {
 	private int street_Number;
 	private String locality;
 	private String country;
+	private String streetName; 
 	private int idRestaurant;
 	
 	private Restaurant restObj;
@@ -34,9 +35,13 @@ public class Address implements IEntityObject {
 		
 		try {
 			numVal = Integer.valueOf(val);
-			doubleVal = Double.valueOf(val);
 		} catch (NumberFormatException e) {
 			numVal = - 1;
+		}
+		
+		try {
+			doubleVal = Double.valueOf(val);
+		} catch (NumberFormatException e) {
 			doubleVal = -1;
 		}
 		
@@ -65,6 +70,7 @@ public class Address implements IEntityObject {
 		if(relatedObj instanceof AddressDescription){
 			setDescriptionObj((AddressDescription) relatedObj);
 			setLocality(getDescriptionObj().getCityName());
+			setStreetName(getDescriptionObj().getStreetName());
 		}
 
 	}
@@ -200,6 +206,20 @@ public class Address implements IEntityObject {
 	 */
 	public void setLocality(String locality) {
 		this.locality = locality;
+	}
+
+	/**
+	 * @return the streetName
+	 */
+	public String getStreetName() {
+		return streetName;
+	}
+
+	/**
+	 * @param streetName the streetName to set
+	 */
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
 	}
 
 }

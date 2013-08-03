@@ -39,7 +39,7 @@ public class GourmetMealDAO {
 		dbGourmetHelper = GourmetOpenHelper.getInstance(context);
 		reifiedSchema = dbGourmetHelper.getReifiedSchema();
 		this.appContext = context;
-		this.sessionsMgr = new UserSessionManager(this.appContext);
+		this.sessionsMgr = UserSessionManager.getInstance(this.appContext);
 	}
 
 	private List<Meal> loadMealsFromCursor(Cursor cursor, RelationalContextManager ctx){

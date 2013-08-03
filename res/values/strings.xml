@@ -10,5 +10,6 @@
     <string name="title_meal_activity">Meal served by Selected Restaurant</string>
     <string name="btn_logout">Logout</string>
     <string name="title_activity_resto_test">RestoTestActivity</string>
+    <string name="title_activity_address">AddressActivity</string>
 
 </resources>
