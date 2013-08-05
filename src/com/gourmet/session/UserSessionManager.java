@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.gourmet.LoginActivity;
+import com.gourmet.model.UserLocation;
 
 /**
- * Encapusalte user session management 
+ * Encapsulates user session management 
  * @author esp
  *
  */
@@ -26,6 +27,10 @@ public class UserSessionManager {
 //	public static final String RANGE_KEY ="range";
 	private static final String LOGGED_IN = "loggedIN";
 	private static final String USER_NAME_KEY = "username";
+	
+	public static final String LOC_LATITUDE = "LATITUDE";
+	public static final String LOC_LONGITUDE ="LONGITUDE";
+	
 	/**
 	 * 
 	 */
@@ -33,7 +38,8 @@ public class UserSessionManager {
 	private SharedPreferences prefs; //Preferences to store user session data	
 	private SharedPreferences.Editor editPref; //Editor for modifying user session data
 	private Context currContext; //context of use
-	
+	private UserLocation userLoc; //default location 
+
 	
 	private static UserSessionManager manager = null;
 	
@@ -48,21 +54,15 @@ public class UserSessionManager {
 	
 	
 	
-	public UserSessionManager(Context context) {
+	private UserSessionManager(Context context) {
 		currContext = context;
 		prefs = currContext.getSharedPreferences(PREF_FILE_NAME,0	);
 		editPref = prefs.edit();
-//		initDefaultLocationRange();
+
 		
 	}
 	
-//	private void initDefaultLocationRange(){
-//		editPref.putString(RANGE_KEY, defaultLocationRange);
-//		editPref.commit();
-//	}
 
-
-	
 
 	public void destroySession(){
 		editPref.clear();
@@ -121,6 +121,19 @@ public class UserSessionManager {
 		return this.prefs.getString(USER_NAME_KEY, "N/A username");
 	}
 	
+	
+	public  UserLocation getUserLocation(){
+		return userLoc;
+	}
+
+
+
+	/**
+	 * @param userLoc the userLoc to set
+	 */
+	public void setUserLocation(UserLocation userLoc) {
+		this.userLoc = userLoc;
+	}
 	
 
 }

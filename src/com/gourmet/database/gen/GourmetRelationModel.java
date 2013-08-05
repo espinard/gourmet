@@ -86,7 +86,7 @@ public  class GourmetRelationModel extends RelationModel {
 	public GourmetRelationModel(){
 		List<Relation> relations = Arrays.asList(
 				GourmetRelationModel.Add_DescriptionRelations.rel_Language_Add_Description,
-				GourmetRelationModel.Add_DescriptionRelations.rel_Address_Add_Description, //TODO  REMARK HERE Relation becomes ONE - ONE @RUNTIME 
+				GourmetRelationModel.Add_DescriptionRelations.rel_Address_Add_Description, //REMARK HERE Relation becomes ONE - ONE @RUNTIME 
 				GourmetRelationModel.AddressRelations.rel_Restaurant_Address,
 				GourmetRelationModel.BelongingRelations.rel_Season_Belonging,
 				GourmetRelationModel.BelongingRelations.rel_Ingredient_Belonging,
@@ -95,9 +95,9 @@ public  class GourmetRelationModel extends RelationModel {
 				GourmetRelationModel.ContenanceRelations.rel_Meal_Contenance,
 				GourmetRelationModel.ContenanceRelations.rel_Ingredient_Contenance,
 				GourmetRelationModel.DescriptionRelations.rel_Language_Description,
-				GourmetRelationModel.DescriptionRelations.rel_Meal_Description,
+				GourmetRelationModel.DescriptionRelations.rel_Meal_Description, // REMARK: HERE Relation becomes ONE - ONE @RUNTIME 
 				GourmetRelationModel.Description2Relations.rel_Language_Description2,
-				GourmetRelationModel.Description2Relations.rel_Ingredient_Description2, //TODO REMARK HERE Relation becomes ONE - ONE @RUNTIME 
+				GourmetRelationModel.Description2Relations.rel_Ingredient_Description2, // REMARK: HERE Relation becomes ONE - ONE @RUNTIME 
 				GourmetRelationModel.MealRelations.rel_Restaurant_Meal,
 				GourmetRelationModel.Meal_RatingRelations.rel_Client_Meal_Rating,
 				GourmetRelationModel.Meal_RatingRelations.rel_Meal_Meal_Rating,
@@ -113,7 +113,7 @@ public  class GourmetRelationModel extends RelationModel {
 				GourmetRelationModel.RequirementRelations.rel_Client_Requirement,
 				GourmetRelationModel.RequirementRelations.rel_User_Constraint_Requirement,
 				GourmetRelationModel.RestaurantRelations.rel_Region_Restaurant,
-				GourmetRelationModel.RestoDescriptionRelations.rel_Restaurant_RestoDescription, //TODO REMARK HERE Relation becomes ONE - ONE @RUNTIME 
+				GourmetRelationModel.RestoDescriptionRelations.rel_Restaurant_RestoDescription, //:REMARK HERE Relation becomes ONE - ONE @RUNTIME 
 				GourmetRelationModel.RestoDescriptionRelations.rel_Language_RestoDescription,
 				GourmetRelationModel.Taste_BelongingRelations.rel_Taste_Taste_Belonging,
 				GourmetRelationModel.Taste_BelongingRelations.rel_Ingredient_Taste_Belonging,
@@ -296,7 +296,7 @@ public  class GourmetRelationModel extends RelationModel {
 
 		public static Relation rel_Meal_Description = new Relation(MEAL_DESCRIPTION,
 				Arrays.asList(new RelationMember(new MealTable(),Occurrence.ONE),
-						new RelationMember(new DescriptionTable(),Occurrence.MANY)),
+						new RelationMember(new DescriptionTable(),Occurrence.ONE)), //become ONE-TO-ONE @Runtime
 						new RelationCondition() {
 			public SqlCondition eval(@Role("described by") Table meal,  Table description){//Add annotation if needed
 				return new SqlCondition().eq(meal.col(MealColumns._ID),description.col(DescriptionColumns.ID_MEAL)); 

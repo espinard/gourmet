@@ -15,9 +15,9 @@ import com.github.dynamicschema.android.sql.SQLStatementsLoader;
 import com.gourmet.database.gen.GourmetSchema;
 
 
-public class GourmetOpenHelper extends SQLiteOpenHelper {
+public class GourmetOpenHelper extends SQLiteOpenHelper { 
 
-	private static final String DATABASE_NAME = "gourmetVersion13.sqlite";  
+	private static final String DATABASE_NAME = "gourmetVersion16.sqlite";  
 	private static final int DATABASE_VERSION = 1;
 
 	private Schema dbSchema;
@@ -26,7 +26,7 @@ public class GourmetOpenHelper extends SQLiteOpenHelper {
 
 	public static GourmetOpenHelper getInstance(Context context){
 		if(helperInstance == null)
-			helperInstance = new GourmetOpenHelper(context);
+			helperInstance = new GourmetOpenHelper(context); 
 		return helperInstance;
 	}
 
@@ -90,11 +90,6 @@ public class GourmetOpenHelper extends SQLiteOpenHelper {
 		for (DBTable dbTable : tables) {
 			String statement = dbTable.createTableStatement();
 			db.execSQL(statement);
-
-			//			List<String> indices = dbTable.createIndexStatements();
-			//			for (String indexStatement : indices) {
-			//				db.execSQL(indexStatement);
-			//			}
 
 		}
 

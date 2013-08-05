@@ -10,12 +10,13 @@ import android.content.Context;
 import com.gourmet.database.dao.GourmetMealDAO;
 import com.gourmet.database.gen.RestaurantTable.RestaurantColumns;
 import com.gourmet.model.interfaces.IEntityObject;
+import com.gourmet.model.interfaces.IUser;
 
 /**
  * @author esp
  *
  */
-public class Restaurant implements IEntityObject {
+public class Restaurant implements IEntityObject, IUser {
 
 
 
@@ -147,7 +148,7 @@ public class Restaurant implements IEntityObject {
 			//Load meals from DB
 
 			GourmetMealDAO dao = GourmetMealDAO.getInstance(this.appContext);
-			this.meals = dao.getMealsOfCurrentRestaurant(this.id);
+			this.meals = dao.getMealsOfRestaurant(this.id);
 
 		}
 		return this.meals;
@@ -293,6 +294,40 @@ public class Restaurant implements IEntityObject {
 	 */
 	public void setAddressObj(Address addressObj) {
 		this.addressObj = addressObj;
+	}
+
+
+	@Override
+	public int getUserID() {
+		return getId();
+	}
+
+
+	@Override
+	public int getLanguageID() {
+		// Default language is English 
+		//For example (validation) purpose, on how to use framework
+		return Language.ENGLISH;
+	}
+
+
+	@Override
+	public String getUserName() {
+		return getName();
+	}
+
+
+	@Override
+	public int getAge() {
+		return -1;
+	}
+
+
+	@Override
+	public UserLocation getDefaultLocation() {
+		double lat = getAddressObj().getLatitude();
+		double longit = getAddressObj().getLongitude();
+		return new UserLocation(lat, longit);
 	}
 
 

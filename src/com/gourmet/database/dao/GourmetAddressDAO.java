@@ -17,15 +17,14 @@ import com.gourmet.database.context.UserLocationManager;
 import com.gourmet.database.gen.AddressTable;
 import com.gourmet.database.gen.AddressTable.AddressColumns;
 import com.gourmet.database.gen.RestaurantTable;
+import com.gourmet.database.services.AddressDAOServices;
 import com.gourmet.model.Address;
 import com.gourmet.model.Meal;
 import com.gourmet.model.Restaurant;
 import com.gourmet.session.UserSessionManager;
 
-public class GourmetAddressDAO {
-	public static final String ALL_ADDR = "Show all Restaurant Addresses";
-	public static final String ALL_ADDR_CLASSIC = "Show All Restaurant Addresses (Classic)";
-
+public class GourmetAddressDAO implements AddressDAOServices {
+	
 	
 	private static GourmetAddressDAO daoInstance = null;
 
@@ -65,7 +64,7 @@ public class GourmetAddressDAO {
 	}
 	
 	/*
-	 * Fetch all restaurant addresses from database 
+	 * Fetch all restaurant clients from database 
 	 */
 	public List<Address> getAllRestaurantAddressesFramework(){
 		ContextedQueryBuilder qb = this.reifiedSchema.getTable(AddressTable.NAME).select();
@@ -74,7 +73,7 @@ public class GourmetAddressDAO {
 	}	
 	
 	/*
-	 * Fetch all restaurant addresses from database without using the framework (for validation)
+	 * Fetch all restaurant clients from database without using the framework (for validation)
 	 */
 	public List<Address> getAllRestaurantAddressesClassic(UserSessionManager userSession){
 		int langID = userSession.getNumericValue(UserSessionManager.LANG_ID_KEY); //id of the language spoken by user

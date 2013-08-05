@@ -14,14 +14,14 @@ import com.gourmet.database.gen.SeasonTable.SeasonColumns;
  * @author esp
  *
  */
-public class SeasonRangeFiltering  extends RelationCondition{
+public class SeasonFiltering  extends RelationCondition{
 
 	
 	
 	/**
 	 * 
 	 */
-	public SeasonRangeFiltering() {
+	public SeasonFiltering() {
 
 	}
 

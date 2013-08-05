@@ -18,19 +18,15 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.gourmet.R;
-import com.gourmet.R.id;
-import com.gourmet.R.layout;
-import com.gourmet.R.menu;
-import com.gourmet.R.string;
 import com.gourmet.activities.ClientRequestActivity;
+import com.gourmet.activities.RestoRequestActiviy;
 import com.gourmet.database.context.DBContextManager;
 import com.gourmet.database.context.UserLocationManager;
-import com.gourmet.database.dao.GourmetAddressDAO;
 import com.gourmet.database.dao.GourmetClientDAO;
 import com.gourmet.database.dao.GourmetRestoDAO;
-import com.gourmet.model.Address;
 import com.gourmet.model.Client;
+import com.gourmet.model.Restaurant;
+import com.gourmet.model.UserLocation;
 import com.gourmet.model.interfaces.IUser;
 import com.gourmet.session.UserSessionManager;
 
@@ -44,21 +40,23 @@ import com.gourmet.session.UserSessionManager;
  * 
  */
 public class LoginActivity extends Activity { 
-	
-	
+
+
 	// =================== Added  Attributes  to customize behavior according to needs
-	
-	public static GourmetClientDAO datasourceClient;
+
+	private GourmetClientDAO datasourceClient;
+	private GourmetRestoDAO datasourceResto;
 	private IUser loggedUser;
 	private UserSessionManager session;
 	private DBContextManager dbContext;
+
 	/////////////
-	
+
 	/**
 	 * The default email to populate the email field with.
 	 */
 	public static final String EXTRA_USER_NAME = "Username";
- 
+
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
@@ -87,17 +85,17 @@ public class LoginActivity extends Activity {
 
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.login || id == EditorInfo.IME_NULL) {
-							attemptLogin();
-							return true;
-						}
-						return false;
-					}
-				});
+		.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView textView, int id,
+					KeyEvent keyEvent) {
+				if (id == R.id.login || id == EditorInfo.IME_NULL) {
+					attemptLogin();
+					return true;
+				}
+				return false;
+			}
+		});
 
 		mLoginFormView = findViewById(R.id.login_form);
 		mLoginStatusView = findViewById(R.id.login_status);
@@ -110,10 +108,14 @@ public class LoginActivity extends Activity {
 						attemptLogin();
 					}
 				});
-		
+
 		//Initialize and Open database access
 		datasourceClient = GourmetClientDAO.getInstance(getApplicationContext());
 		dbContext = DBContextManager.getInstance(getApplicationContext());
+		datasourceResto = GourmetRestoDAO.getInstance(getApplicationContext());
+		datasourceClient.openDataSource();
+		datasourceResto.openDataSource();
+
 	}
 
 	@Override
@@ -139,12 +141,12 @@ public class LoginActivity extends Activity {
 
 		// Store values at the time of the login attempt.
 		mEmail = mUserNameView.getText().toString();
-//		mPassword = mPasswordView.getText().toString();
+		//		mPassword = mPasswordView.getText().toString();
 
 		boolean cancel = false;
 		View focusView = null;
 
-		
+
 
 		// Check for a valid email address.
 		if (TextUtils.isEmpty(mEmail)) {
@@ -181,25 +183,25 @@ public class LoginActivity extends Activity {
 
 			mLoginStatusView.setVisibility(View.VISIBLE);
 			mLoginStatusView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 1 : 0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mLoginStatusView.setVisibility(show ? View.VISIBLE
-									: View.GONE);
-						}
-					});
+			.alpha(show ? 1 : 0)
+			.setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					mLoginStatusView.setVisibility(show ? View.VISIBLE
+							: View.GONE);
+				}
+			});
 
 			mLoginFormView.setVisibility(View.VISIBLE);
 			mLoginFormView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 0 : 1)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mLoginFormView.setVisibility(show ? View.GONE
-									: View.VISIBLE);
-						}
-					});
+			.alpha(show ? 0 : 1)
+			.setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					mLoginFormView.setVisibility(show ? View.GONE
+							: View.VISIBLE);
+				}
+			});
 		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
 			// and hide the relevant UI components.
@@ -215,7 +217,7 @@ public class LoginActivity extends Activity {
 	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
-		
+
 			loggedUser = null;
 			dbContext.resetNeutralProfile();
 			List<Client> allowedClients = datasourceClient.getAllClients();
@@ -224,9 +226,18 @@ public class LoginActivity extends Activity {
 					loggedUser = client;
 					return true;
 				}
-			}			
-	
-			//TODO Handle Restaurant user too		
+			}
+
+			List<Restaurant> allowedRestos = datasourceResto.getAllRestaurantLogin();
+			for (Restaurant resto : allowedRestos) {
+				int id = resto.getId();
+				String expectedName = "R"+id;
+				if(expectedName.equals(mEmail)){
+					loggedUser = resto;
+					return true;
+				}
+			}
+
 			return false;
 		}
 
@@ -243,7 +254,7 @@ public class LoginActivity extends Activity {
 			}
 		}
 
-	
+
 
 		@Override
 		protected void onCancelled() {
@@ -251,36 +262,48 @@ public class LoginActivity extends Activity {
 			showProgress(false);
 		}
 	}
-	
+
 	/**
 	 * Start the user session 
 	 */
 	private void startUserSession() {
+
 		
+		dbContext.resetNeutralProfile();
 		session = UserSessionManager.getInstance(getApplicationContext());
-		
+
+		if(loggedUser instanceof Client){
+			session.registerNumeric(UserSessionManager.CLIENT_ID_KEY, this.loggedUser.getUserID());
+			session.registerNumeric(UserSessionManager.AGE_KEY, this.loggedUser.getAge());
+			session.registerRawData(UserSessionManager.PROFILE_TYPE, UserSessionManager.CLIENT);
+		}else{ //Restaurant
+			session.registerRawData(UserSessionManager.PROFILE_TYPE, UserSessionManager.RESTAURANT);
+			session.registerNumeric(UserSessionManager.RESTO_ID_KEY, this.loggedUser.getUserID());	
+		}
 		session.registerUser(this.loggedUser.getUserName());
-		session.registerNumeric(UserSessionManager.CLIENT_ID_KEY, this.loggedUser.getUserID());
-		session.registerNumeric(UserSessionManager.LANG_ID_KEY,this.loggedUser.getLanguageID());
-		session.registerNumeric(UserSessionManager.AGE_KEY, this.loggedUser.getAge());
-		session.registerRawData(UserSessionManager.PROFILE_TYPE, UserSessionManager.CLIENT);
-		
+		session.registerNumeric(UserSessionManager.LANG_ID_KEY, this.loggedUser.getLanguageID());
+
+		UserLocation loc = this.loggedUser.getDefaultLocation();
+		session.setUserLocation(loc);
+
+
 		//Change context
 		dbContext.setUserProfile(session);
 		dbContext.setProfileActive(true);
 		//Set up location manager 
 		UserLocationManager.assignSession(session);
-		
-		//TODO handle restaurant too
-		// Restaurant have only  1 default Language when they act as user of App (limitation)
+		Intent clReqIntent = null;
+		if(loggedUser instanceof Client)
+			clReqIntent = new Intent(getApplicationContext(), ClientRequestActivity.class);
+		else
+			clReqIntent = new Intent(getApplicationContext(), RestoRequestActiviy.class);
 
-		 Intent clReqIntent = new Intent(getApplicationContext(), ClientRequestActivity.class);
-		 startActivity(clReqIntent);
-		 finish();
-		
+		startActivity(clReqIntent);
+		finish();
+
 	}
-	
-	
+
+
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onPause()
@@ -288,7 +311,6 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		//datasourceClient.closeDataSource();
 	}
 
 	/* (non-Javadoc)
@@ -298,7 +320,6 @@ public class LoginActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		//datasourceClient.openDataSource();
 	}
 
 	/* (non-Javadoc)
@@ -307,8 +328,6 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-
-		datasourceClient.openDataSource();
 	}
 
 	/* (non-Javadoc)

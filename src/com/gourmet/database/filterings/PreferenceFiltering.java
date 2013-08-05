@@ -15,6 +15,7 @@ import com.gourmet.database.gen.PreferenceTable;
  */
 public class PreferenceFiltering extends RelationCondition{
 
+	public static final int NO_SPECIFIC_CLIENT = -1;
 	private boolean pref;
 	private int clientID; 
 	
@@ -46,8 +47,13 @@ public class PreferenceFiltering extends RelationCondition{
 	
 			
 			locCond = new SqlCondition().eq(tables[i].col(PreferenceTable.PreferenceColumns.PREF), preference);
-			secCond = new SqlCondition().eq(tables[i].col(PreferenceTable.PreferenceColumns.ID_CLIENT), this.clientID);
-			locCond.and(secCond.toString());		
+			
+			if(this.clientID != NO_SPECIFIC_CLIENT ){
+				secCond = new SqlCondition().eq(tables[i].col(PreferenceTable.PreferenceColumns.ID_CLIENT), this.clientID);
+				locCond.and(secCond.toString());	
+			}
+				
+			
 			finalCond.and(locCond.toString());
 			
 		}

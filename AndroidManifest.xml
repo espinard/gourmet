@@ -29,20 +29,29 @@
             android:name="com.gourmet.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+
+            <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.gourmet.RestoTestActivity"
             android:label="@string/title_activity_resto_test" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.gourmet.activities.AddressActivity"
+            android:label="@string/title_activity_address" >
+        </activity>
+        <activity
+            android:name="com.gourmet.activities.RestoRequestActiviy"
+            android:label="@string/title_activity_resto_request_activiy" >
+        </activity>
+        <activity
+            android:name="com.gourmet.activities.ClientListActivity"
+            android:label="@string/title_activity_client_list" >
         </activity>
     </application>
 

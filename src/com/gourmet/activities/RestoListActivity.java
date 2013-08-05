@@ -33,7 +33,7 @@ public class RestoListActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        sessionMgr = new UserSessionManager(getApplicationContext());
+        sessionMgr = UserSessionManager.getInstance(getApplicationContext());
         sessionMgr.checkUserSession();  
         datasourceResto  = GourmetRestoDAO.getInstance(getApplicationContext());
 		datasourceResto.openDataSource();
@@ -44,10 +44,13 @@ public class RestoListActivity extends Activity {
         btnLogout = (Button) findViewById(R.id.bouton_logout);
         
         btnLogout.setText(sessionMgr.getUserName()+ " - " + btnLogout.getText());
+        
 
         
         //Get the restaurants list to display (from DB)       
-        String loadingReq = getIntent().getStringExtra(AppConstants.REQUEST.toString());    
+        String loadingReq = getIntent().getStringExtra(AppConstants.REQUEST.toString());   
+        setTitle(loadingReq);
+
         List<Restaurant> restList= handleRestaurantsLoadingRequest(loadingReq);      
         
         Restaurant [] restArr = restList.toArray( new Restaurant [restList.size()]);
@@ -90,10 +93,10 @@ public class RestoListActivity extends Activity {
 		
 		else if(request.equals(RestaurantDAOServices.ALL_NEAREST_NO_PREF))
 			restList =  datasourceResto.getAllNearbyRestaurants();
-		else
-			
+		else if(request.equals(RestaurantDAOServices.NEARBY_REST_SEASON))
 			restList =datasourceResto.getNearbyRestoServingSeasonalMealsWithPrefIngr();
 		
+
 
 		
 		return restList;

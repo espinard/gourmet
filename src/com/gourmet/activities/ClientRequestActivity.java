@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.gourmet.R;
 import com.gourmet.database.dao.GourmetAddressDAO;
+import com.gourmet.database.services.AddressDAOServices;
 import com.gourmet.database.services.RestaurantDAOServices;
 import com.gourmet.model.AppConstants;
 import com.gourmet.session.UserSessionManager;
@@ -35,19 +36,19 @@ public class ClientRequestActivity extends Activity {
 
 		btnLogout = (Button) findViewById(R.id.btnLogoutCliReq);
 		lViewOptions=  (ListView) findViewById(R.id.listViewCliReq);
-
+		setTitle("Client User options");
         btnLogout.setText(sessionMgr.getUserName()+ " - " + btnLogout.getText());
 
 		
 		options = new String [] {
+				RestaurantDAOServices.ALL_REST,
+				RestaurantDAOServices.ALL_REST_CLASSIC,
+				AddressDAOServices.ALL_ADDR,
+				AddressDAOServices.ALL_ADDR_CLASSIC,
 				RestaurantDAOServices.NEARBY_REST_PREF,
 				RestaurantDAOServices.ALL_NEAREST_NO_PREF,
 				RestaurantDAOServices.REST_PREF,
 				RestaurantDAOServices.NEARBY_REST_SEASON,
-				RestaurantDAOServices.ALL_REST,
-				RestaurantDAOServices.ALL_REST_CLASSIC,
-				GourmetAddressDAO.ALL_ADDR,
-				GourmetAddressDAO.ALL_ADDR_CLASSIC
 		};
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, options);

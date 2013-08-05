@@ -15,7 +15,7 @@ import com.gourmet.model.interfaces.IEntityObject;
 public class Language implements IEntityObject {
 	
 	
-
+	public static int ENGLISH = 2;
 
 	private String name;
 	private int id;

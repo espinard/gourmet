@@ -225,6 +225,11 @@ public class Client implements IEntityObject, IUser {
 		this.longitude = longitude;
 	}
 
+	@Override
+	public UserLocation getDefaultLocation() {
+		return new UserLocation(getLatitude(), getLongitude());
+	}
+
 
 
 }

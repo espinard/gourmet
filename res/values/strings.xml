@@ -11,5 +11,7 @@
     <string name="btn_logout">Logout</string>
     <string name="title_activity_resto_test">RestoTestActivity</string>
     <string name="title_activity_address">AddressActivity</string>
+    <string name="title_activity_resto_request_activiy">RestoRequestActiviy</string>
+    <string name="title_activity_client_list">ClientListActivity</string>
 
 </resources>

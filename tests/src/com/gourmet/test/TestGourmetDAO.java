@@ -24,7 +24,7 @@ public class TestGourmetDAO extends AndroidTestCase {
 		super.setUp();
 	
 		try {
-			daoCl = new GourmetClientDAO(getContext());
+			daoCl = GourmetClientDAO.getInstance(getContext());
 			daoCl.openDataSource();
 	
 		} catch (SQLException e) {

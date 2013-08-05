@@ -38,7 +38,7 @@ public class DBContextManager {
 	
 	private GourmetOpenHelper dbGourmetHelper;
 
-	public DBContextManager(Context context) {
+	private DBContextManager(Context context) {
 		dbGourmetHelper = GourmetOpenHelper.getInstance(context);
 		
 	}
@@ -67,14 +67,16 @@ public class DBContextManager {
 			preference.setFiltering(new PreferenceFiltering(true, userID));
 		}else {
 			userID = userSession.getNumericValue(RESTO_ID_KEY);
-			rest.setFiltering(new EmptyFilteringCondition());
-			preference.setFiltering(new EmptyFilteringCondition());
+			rest.resetFilterings(new EmptyFilteringCondition());
+			preference.resetFilterings(new EmptyFilteringCondition());
+			
 		}
 		language.setFiltering( new LanguageFiltering(userLangID));
 
 	}
 	
 	public void resetNeutralProfile(){
+		
 		
 		if(profileActive ){
 			List<DBTable> tables = dbGourmetHelper.getReifiedSchema().getTables();

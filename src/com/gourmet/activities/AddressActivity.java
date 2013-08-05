@@ -10,6 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.google.common.util.concurrent.SettableFuture;
 import com.gourmet.R;
 import com.gourmet.adapters.AddressAdapter;
 import com.gourmet.database.dao.GourmetAddressDAO;
@@ -40,6 +41,9 @@ public class AddressActivity extends Activity {
 		
 		
         String loadingReq = getIntent().getStringExtra(AppConstants.REQUEST.toString());    
+
+        setTitle(loadingReq);
+        
         List<Address> addr = handleAddrLoadingRequest(loadingReq);
         Address [] addrArr = addr.toArray(new Address [addr.size()]);
         
