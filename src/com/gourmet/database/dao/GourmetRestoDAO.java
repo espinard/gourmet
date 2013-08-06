@@ -243,7 +243,7 @@ public class GourmetRestoDAO implements RestaurantDAOServices {
 		query+=" LEFT JOIN Address AS A1 ON R1._id = A1.id_restaurant ";
 		query+=" LEFT JOIN Add_Description AS AD1 ON A1._id = AD1.id_address ";
 		query+=" AND AD1.id_language = " + langID;
-		query+=" AND R1.Age_min  <= " + age;
+		query+=" WHERE R1.Age_min  <= " + age;
 		//Result set containing result of the query
 		Cursor cursor = database.rawQuery(query, null);
 		List<Restaurant> lRest = load(cursor); //build a list of restaurants entities 

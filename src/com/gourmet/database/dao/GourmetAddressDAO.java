@@ -77,11 +77,15 @@ public class GourmetAddressDAO implements AddressDAOServices {
 	 */
 	public List<Address> getAllRestaurantAddressesClassic(UserSessionManager userSession){
 		int langID = userSession.getNumericValue(UserSessionManager.LANG_ID_KEY); //id of the language spoken by user
+		int age = userSession.getNumericValue(UserSessionManager.AGE_KEY);
 		String query = " SELECT A1._id, A1.id_restaurant, A1.Postal_Code,";
-		query+= " A1.Street_Number, AD1.Street_Name, AD1.City_Name ";
+		query+= " A1.Street_Number, AD1.Street_Name, AD1.City_Name, R1._id";
 		query+= " FROM Address AS A1 ";
+		query+= " LEFT JOIN Restaurant AS R1 ON R1._id = A1.id_restaurant  ";
 		query+= " LEFT JOIN Add_Description AS AD1 ON A1._id = AD1.id_address ";
 		query+= " AND AD1.id_language =  " + langID;
+		query+= " WHERE R1.Age_min <= " + age;
+		
 	
 		Cursor cursor = database.rawQuery(query, null);
 		 List<Address> lAddr = load(cursor); //build a list of restaurants entities 
